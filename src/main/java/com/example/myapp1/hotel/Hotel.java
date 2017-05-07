@@ -124,4 +124,3 @@ public class Hotel implements Serializable, Cloneable {
 		this.url = url;
 	}
 }
-//
