@@ -101,10 +101,10 @@ public class HotelForm extends FormLayout{
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
 		binder.setBean(hotel);
-		
 		delete.setVisible(hotel.isPersisted());
 		setVisible(true);
 		name.selectAll();
+		binder.validate();
 	}
 	
 	private void delete() {
@@ -117,8 +117,8 @@ public class HotelForm extends FormLayout{
 		binder.validate();
 		if (binder.isValid()) {
 			service.save(hotel);
-		myUI.updateListHotel();
-		setVisible(false);
+			myUI.updateListHotel();
+			setVisible(false);
 		}
 	}
 }

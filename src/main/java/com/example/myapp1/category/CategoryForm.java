@@ -46,10 +46,10 @@ public class CategoryForm extends FormLayout{
 	public void setCategory(Category category) {
 		this.category = category;
 		binder.setBean(category);
-		
 		delete.setVisible(category.isPersisted());
 		setVisible(true);
 		categoryField.selectAll();
+		binder.validate();
 	}
 	
 	private void delete() {
@@ -70,8 +70,8 @@ public class CategoryForm extends FormLayout{
 		binder.validate();
 		if (binder.isValid()) {
 			service.save(category);
-		myUI.updateListCategory();
-		setVisible(false);
+			myUI.updateListCategory();
+			setVisible(false);
 		}
 	}
 }
