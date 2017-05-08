@@ -150,6 +150,7 @@ public class MyUI extends UI {
     	        deleteCategoryBtn.setVisible(false);
     	        
     	        gridCategory.asMultiSelect().addValueChangeListener(event -> {
+    	        	formCategory.setVisible(false);
     	        	if(event.getValue().size() == 1) {
     	        		editCategoryBtn.setVisible(true);
     	        		deleteCategoryBtn.setVisible(true);

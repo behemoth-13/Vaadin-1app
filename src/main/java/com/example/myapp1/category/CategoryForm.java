@@ -68,7 +68,7 @@ public class CategoryForm extends FormLayout{
 	
 	private void save() {
 		binder.validate();
-		if (binder.isValid()) {
+		if (binder.isValid() && (!service.isExistCategory(category))) {
 			service.save(category);
 			myUI.updateListCategory();
 			setVisible(false);

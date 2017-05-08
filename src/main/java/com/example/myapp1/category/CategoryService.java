@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.example.myapp1.hotel.Hotel;
+
 public class CategoryService {
 	
 	private static CategoryService instance;
@@ -88,5 +90,14 @@ public class CategoryService {
 				save(c);
 			}
 		}
+	}
+
+	public synchronized boolean isExistCategory(Category checkCategory) {
+		for (Category category : categories.values()) {
+			if (checkCategory.equals(category)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
