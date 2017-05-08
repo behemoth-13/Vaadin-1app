@@ -39,7 +39,7 @@ public class CategoryForm extends FormLayout{
 		
 		categoryField.setDescription("This is Category");
 		binder.forField(categoryField).asRequired("Hotel not null")
-		.withValidator(categoryVal -> categoryVal.length() > 0, "Category should not be empty")
+		.withValidator(categoryVal -> categoryVal.trim().length() > 1, "Category should not be empty")
 		.bind(Category::getCategory, Category::setCategory);
 	}
 
@@ -67,9 +67,11 @@ public class CategoryForm extends FormLayout{
 	}
 	
 	private void save() {
-		service.save(category);
+		binder.validate();
+		if (binder.isValid()) {
+			service.save(category);
 		myUI.updateListCategory();
-		
 		setVisible(false);
+		}
 	}
 }

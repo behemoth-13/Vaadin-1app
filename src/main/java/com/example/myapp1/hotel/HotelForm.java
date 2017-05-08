@@ -61,11 +61,11 @@ public class HotelForm extends FormLayout{
 	
 	private void bindFields() {
 		binder.forField(name).asRequired("Every hotel must have a name")
-		.withValidator(nameVal -> nameVal.length() > 1, "Name should not be empty")
+		.withValidator(nameVal -> nameVal.trim().length() > 1, "Name should not be empty")
 		.bind(Hotel::getName, Hotel::setName);
 		
 		binder.forField(address).asRequired("Every hotel must have an address")
-		.withValidator(addressVal -> addressVal.length() > 1, "Address should not be empty")
+		.withValidator(addressVal -> addressVal.trim().length() > 1, "Address should not be empty")
 		.bind(Hotel::getAddress, Hotel::setAddress);
 		
 		binder.forField(rating).withConverter(new StringToIntegerConverter(0, "Only Digits!"))
@@ -114,8 +114,11 @@ public class HotelForm extends FormLayout{
 	}
 	
 	private void save() {
-		service.save(hotel);
+		binder.validate();
+		if (binder.isValid()) {
+			service.save(hotel);
 		myUI.updateListHotel();
 		setVisible(false);
+		}
 	}
 }
