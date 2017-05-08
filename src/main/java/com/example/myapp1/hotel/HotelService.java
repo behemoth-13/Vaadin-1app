@@ -194,5 +194,14 @@ public class HotelService {
 			}
 		}
 	}
+	
+	public synchronized boolean isExistHotel(Hotel checkHotel) {
+		for (Hotel hotel : hotels.values()) {
+			if (checkHotel.equals(hotel)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
 

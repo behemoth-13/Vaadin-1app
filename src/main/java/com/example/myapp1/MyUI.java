@@ -19,7 +19,6 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -85,7 +84,7 @@ public class MyUI extends UI {
         
         gridHotel.setColumns("name", "address", "rating", "operatesFrom", "category");
 
-        Column<Hotel, String> htmlColumn = gridHotel.addColumn(hotel ->
+        gridHotel.addColumn(hotel ->
         "<a href='" + hotel.getUrl() + "' target='_blank'>" + hotel.getUrl() +"</a>",
         new HtmlRenderer()).setCaption("Url");
         

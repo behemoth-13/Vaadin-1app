@@ -115,7 +115,7 @@ public class HotelForm extends FormLayout{
 	
 	private void save() {
 		binder.validate();
-		if (binder.isValid()) {
+		if (binder.isValid() && (!service.isExistHotel(hotel))) {
 			service.save(hotel);
 			myUI.updateListHotel();
 			setVisible(false);
