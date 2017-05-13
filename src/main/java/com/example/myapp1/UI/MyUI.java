@@ -105,6 +105,7 @@ public class MyUI extends UI {
         formHotel.setVisible(false);
         
         gridHotel.asSingleSelect().addValueChangeListener(event -> {
+        	updateListCategory();
         	if(event.getValue() == null) {
         		formHotel.setVisible(false);
         	} else {
@@ -196,7 +197,6 @@ public class MyUI extends UI {
     	        previous = selectedItem;
     	        layout.removeAllComponents();
     	        layout.addComponents(selection, barmenu, toolbar, main);
-    	        
     	        updateListHotel();
     	    }
     	};
@@ -208,12 +208,14 @@ public class MyUI extends UI {
     public void updateListCategory() {
     	List<Category> categories = serviceCategory.findAll();
         gridCategory.setItems(categories);
+        formHotel.refreshCategoryField();
         serviceHotel.refreshHotels();
 	}
 
 	public void updateListHotel() {
-		List<Hotel> hotels = serviceHotel.findAll(filterByName.getValue(), filterByAddress.getValue());
+		List<Hotel> hotels = serviceHotel.findAll();
         gridHotel.setItems(hotels);
+        serviceHotel.refreshHotels();
 	}
 
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

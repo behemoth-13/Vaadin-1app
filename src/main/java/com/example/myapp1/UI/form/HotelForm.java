@@ -49,18 +49,19 @@ public class HotelForm extends FormLayout{
 		//save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		//save.setStyleName(ValoTheme.BUTTON_FRIENDLY);
 		save.setClickShortcut(KeyCode.ENTER);
-		save.setDescription("Save");
 		save.addClickListener(e -> save());
 		delete.addClickListener(e -> delete());
+		cancel.setClickShortcut(KeyCode.ESCAPE);
+		cancel.addClickListener(e -> cancel());
 
 		setToolTips();
 		bindFields();
 	}
 	
-	/*public void refreshCategoryField() {
+	public void refreshCategoryField() {
 		category.clear();
 		category.setItems(CategoryService.getInstance().findAll().toArray(new Category[(int)CategoryService.getInstance().count()]));
-	}*/
+	}
 	
 	private void bindFields() {
 		binder.forField(name).asRequired("Every hotel must have a name")
@@ -124,9 +125,16 @@ public class HotelForm extends FormLayout{
 	private void save() {
 		binder.validate();
 		if (binder.isValid() && (!service.isExistHotel(hotel))) {
+			System.out.println("in save");
 			service.save(hotel);
 			myUI.updateListHotel();
 			setVisible(false);
 		}
+	}
+	
+	private void cancel() {
+		myUI.updateListCategory();
+		service.refreshHotels();
+		setVisible(false);
 	}
 }

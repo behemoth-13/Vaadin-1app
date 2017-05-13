@@ -27,7 +27,7 @@ import javax.validation.constraints.Size;
 	   		+ "(LOWER(h.name) LIKE :filterByName) AND (LOWER(h.address) LIKE :filterByAddress)"),
 	   @NamedQuery(name = "Hotel.equals", query = "SELECT h FROM Hotel AS h WHERE "
 		   		+ "(h.name = :name) AND (h.address = :address) AND (h.category = :category) AND (h.rating = :rating) AND "
-		   		+ "(h.operatesFrom = :operatesFrom) AND (h.url = :url)")
+		   		+ "(h.operatesFrom = :operatesFrom) AND (h.url = :url) AND (h.description = :description)")
 	})
 public class Hotel extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
