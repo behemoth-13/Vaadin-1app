@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet author="melamory" id="init">
+		<!-- ================================= Hotels ================================= -->
+		<createTable tableName="HOTEL">
+			<column autoIncrement="true" name="ID" type="BIGINT">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="OPTLOCK" type="BIGINT" />
+			<column name="NAME" type="VARCHAR(255)" />
+			<column name="ADDRESS" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RATING" type="INT">
+				<constraints nullable="false" />
+			</column>
+			<column name="OPERATES_FROM" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="CATEGORY" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="URL" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="Alexei Afanasyeu" id="fix table HOTEL">
+	 	<modifyDataType tableName="HOTEL" columnName="ID" 
+			newDataType="BIGINT UNSIGNED"/>
+		<modifyDataType tableName="HOTEL" columnName="OPTLOCK" 
+			newDataType="BIGINT UNSIGNED"/>
+		<addNotNullConstraint tableName="HOTEL" columnName="NAME" 
+			columnDataType="VARCHAR(255)"/>
+		<modifyDataType tableName="HOTEL" columnName="RATING" 
+			newDataType="INT UNSIGNED"/>
+		<addNotNullConstraint tableName="HOTEL" columnName="RATING" 
+			columnDataType="INT UNSIGNED"/>
+		<modifyDataType tableName="HOTEL" columnName="OPERATES_FROM" 
+			newDataType="BIGINT UNSIGNED"/>
+		<addNotNullConstraint tableName="HOTEL" columnName="OPERATES_FROM" 
+			columnDataType="BIGINT UNSIGNED"/>
+		<renameColumn tableName="HOTEL" oldColumnName="CATEGORY" 
+			newColumnName="CATEGORY_ID" columnDataType="VARCHAR(255)"/>
+		<modifyDataType tableName="HOTEL" columnName="CATEGORY_ID" 
+			newDataType="BIGINT UNSIGNED"/>
+		<addDefaultValue columnName="OPTLOCK" columnDataType="BIGINT UNSIGNED" defaultValueNumeric="1" tableName="HOTEL"/>
+	</changeSet>
+	<changeSet id="table HOTEL add column DESCRIPTION" author="Alexei Afanasyeu">
+		<addColumn tableName="HOTEL">
+			<column name="DESCRIPTION" type="TEXT"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Alexei Afanasyeu" id="new Table CATEGORY">
+		<!-- ================================= Categories ================================= -->
+		<createTable tableName="CATEGORY">
+			<column autoIncrement="true" name="ID" type="BIGINT UNSIGNED">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="OPTLOCK" type="BIGINT UNSIGNED" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="NAME" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="Alexei Afanasyeu" id="add foreign key for table HOTEL">
+		<addForeignKeyConstraint constraintName="FK_CATEGORY_ID" referencedTableName="CATEGORY" 
+			baseColumnNames="CATEGORY_ID" baseTableName="HOTEL" referencedColumnNames="ID"
+			onDelete="SET NULL"/>
+	</changeSet>
+</databaseChangeLog>

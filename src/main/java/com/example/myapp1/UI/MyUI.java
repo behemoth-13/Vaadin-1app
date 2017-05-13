@@ -1,15 +1,15 @@
-package com.example.myapp1;
+package com.example.myapp1.UI;
 
 import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.example.myapp1.category.Category;
-import com.example.myapp1.category.CategoryForm;
-import com.example.myapp1.category.CategoryService;
-import com.example.myapp1.hotel.Hotel;
-import com.example.myapp1.hotel.HotelService;
-import com.example.myapp1.hotel.HotelForm;
+import com.example.myapp1.UI.form.CategoryForm;
+import com.example.myapp1.UI.form.HotelForm;
+import com.example.myapp1.dao.entity.Category;
+import com.example.myapp1.dao.entity.Hotel;
+import com.example.myapp1.service.CategoryService;
+import com.example.myapp1.service.HotelService;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.icons.VaadinIcons;
@@ -28,11 +28,12 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.renderers.HtmlRenderer;
+import com.vaadin.ui.renderers.TextRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
-@SuppressWarnings("serial")
 @Theme("mytheme")
 public class MyUI extends UI {
+	private static final long serialVersionUID = 1L;
 	
 	private HotelService serviceHotel = HotelService.getInstance();
 	private CategoryService serviceCategory = CategoryService.getInstance();
@@ -83,7 +84,7 @@ public class MyUI extends UI {
         HorizontalLayout toolbar = new HorizontalLayout(filteringByName, filteringByAdress, addHotelBtn);
         
         gridHotel.setColumns("name", "address", "rating", "operatesFrom", "category");
-
+        gridHotel.getColumn("category").setRenderer(new TextRenderer("Category was deleted"));
         gridHotel.addColumn(hotel ->
         "<a href='" + hotel.getUrl() + "' target='_blank'>" + hotel.getUrl() +"</a>",
         new HtmlRenderer()).setCaption("Url");
@@ -112,7 +113,8 @@ public class MyUI extends UI {
         });
         
 		MenuBar.Command showCategories = new MenuBar.Command() {
-    	    MenuItem previous = null;
+			private static final long serialVersionUID = 1L;
+			MenuItem previous = null;
     	    @Override
     	    public void menuSelected(MenuItem selectedItem) {
     	    	
@@ -134,6 +136,8 @@ public class MyUI extends UI {
     	        });
     	        
     	        Button editCategoryBtn = new Button("Edit");
+    	        editCategoryBtn.setDisableOnClick(true);
+    	        
     	        editCategoryBtn.addClickListener(event -> {
     	        	formCategory.setCategory(gridCategory.asMultiSelect().getSelectedItems().iterator().next());
     	        });
@@ -142,25 +146,24 @@ public class MyUI extends UI {
     	        deleteCategoryBtn.addClickListener(e -> {
     	        	formCategory.delete(gridCategory.asMultiSelect().getSelectedItems());
     	        	gridCategory.asMultiSelect().clear();
-    	        	formHotel.refreshCategoryField();
+    	        	serviceHotel.refreshHotels();
     	        });
     	        
-    	        addCategoryBtn.setVisible(true);
-    	        editCategoryBtn.setVisible(false);
-    	        deleteCategoryBtn.setVisible(false);
+    	        editCategoryBtn.setEnabled(false);
+    	        deleteCategoryBtn.setEnabled(false);
     	        
     	        gridCategory.asMultiSelect().addValueChangeListener(event -> {
     	        	formCategory.setVisible(false);
     	        	if(event.getValue().size() == 1) {
-    	        		editCategoryBtn.setVisible(true);
-    	        		deleteCategoryBtn.setVisible(true);
+    	        		editCategoryBtn.setEnabled(true);
+    	    	        deleteCategoryBtn.setEnabled(true);
     	        	} else if(event.getValue().size() == 0) {
-    	        		editCategoryBtn.setVisible(false);
-    	        		deleteCategoryBtn.setVisible(false);
+    	        		editCategoryBtn.setEnabled(false);
+    	    	        deleteCategoryBtn.setEnabled(false);
     	        	}
     	        	else if(event.getValue().size() > 1) {
-    	        		editCategoryBtn.setVisible(false);
-    	        		deleteCategoryBtn.setVisible(true);
+    	        		editCategoryBtn.setEnabled(false);
+    	    	        deleteCategoryBtn.setEnabled(true);
     	        	}
     	        });
     	        
@@ -179,7 +182,8 @@ public class MyUI extends UI {
     	};
     	
 		MenuBar.Command showHotels = new MenuBar.Command() {
-    	    MenuItem previous = null;
+			private static final long serialVersionUID = 1L;
+			MenuItem previous = null;
     	    @Override
     	    public void menuSelected(MenuItem selectedItem) {
     	        selection.setValue("Ordered a " +
@@ -204,8 +208,7 @@ public class MyUI extends UI {
     public void updateListCategory() {
     	List<Category> categories = serviceCategory.findAll();
         gridCategory.setItems(categories);
-        formHotel.refreshCategoryField();
-        serviceHotel.updateCategory();
+        serviceHotel.refreshHotels();
 	}
 
 	public void updateListHotel() {
@@ -213,8 +216,10 @@ public class MyUI extends UI {
         gridHotel.setItems(hotels);
 	}
 
-    @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
+	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
     public static class MyUIServlet extends VaadinServlet {
+		private static final long serialVersionUID = 1L;
     }
+    
 }
