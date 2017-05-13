@@ -162,7 +162,7 @@ public class MyUI extends UI {
     	        		editCategoryBtn.setEnabled(false);
     	    	        deleteCategoryBtn.setEnabled(false);
     	        	}
-    	        	else if(event.getValue().size() > 1) {
+    	        	else {
     	        		editCategoryBtn.setEnabled(false);
     	    	        deleteCategoryBtn.setEnabled(true);
     	        	}

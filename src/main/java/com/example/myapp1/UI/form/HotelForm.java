@@ -15,9 +15,11 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.themes.ValoTheme;
 
 public class HotelForm extends FormLayout{
 	private static final long serialVersionUID = 1L;
@@ -32,6 +34,7 @@ public class HotelForm extends FormLayout{
 	private Button save = new Button(VaadinIcons.CHECK);
 	private Button delete = new Button(VaadinIcons.TRASH);
 	private Button cancel = new Button(VaadinIcons.CLOSE);
+	private final Label errorMessage = new Label("");
 	
 	private HotelService service = HotelService.getInstance();
 	private Hotel hotel;
@@ -43,17 +46,25 @@ public class HotelForm extends FormLayout{
 		
 		setSizeUndefined();
 		HorizontalLayout buttons = new HorizontalLayout(save, delete, cancel);
-		addComponents(name, address, rating, operatesFrom, category, description, url, buttons);
-		
+		addComponents(name, address, rating, operatesFrom, category, description, url, buttons, errorMessage);
+		errorMessage.setVisible(false);
+		errorMessage.setStyleName(ValoTheme.LABEL_FAILURE);
 		category.setItems(CategoryService.getInstance().findAll().toArray(new Category[(int)CategoryService.getInstance().count()]));
-		//save.setStyleName(ValoTheme.BUTTON_PRIMARY);
-		//save.setStyleName(ValoTheme.BUTTON_FRIENDLY);
 		save.setClickShortcut(KeyCode.ENTER);
 		save.addClickListener(e -> save());
 		delete.addClickListener(e -> delete());
 		cancel.setClickShortcut(KeyCode.ESCAPE);
 		cancel.addClickListener(e -> cancel());
 
+		name.addListener(e -> errorMessage.setVisible(false));
+		address.addListener(e -> errorMessage.setVisible(false));
+		rating.addListener(e -> errorMessage.setVisible(false));
+		operatesFrom.addListener(e -> errorMessage.setVisible(false));
+		category.addListener(e -> errorMessage.setVisible(false));
+		description.addListener(e -> errorMessage.setVisible(false));
+		url.addListener(e -> errorMessage.setVisible(false));
+		addListener(e -> errorMessage.setVisible(false));
+		
 		setToolTips();
 		bindFields();
 	}
@@ -125,10 +136,12 @@ public class HotelForm extends FormLayout{
 	private void save() {
 		binder.validate();
 		if (binder.isValid() && (!service.isExistHotel(hotel))) {
-			System.out.println("in save");
 			service.save(hotel);
 			myUI.updateListHotel();
 			setVisible(false);
+		}else {
+			errorMessage.setVisible(true);
+			errorMessage.setValue("Hotel exist!");
 		}
 	}
 	

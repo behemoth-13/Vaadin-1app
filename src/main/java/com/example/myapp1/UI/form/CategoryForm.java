@@ -10,6 +10,7 @@ import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -19,7 +20,7 @@ public class CategoryForm extends FormLayout{
 	private TextField categoryField = new TextField("Category");
 	private Button save = new Button("Save");
 	private Button cancel = new Button("Cancel");
-	
+	private final Label errorMessage = new Label("");
 	
 	private CategoryService service = CategoryService.getInstance();
 	private Category category;
@@ -30,15 +31,18 @@ public class CategoryForm extends FormLayout{
 		this.myUI = myUI;
 		
 		setSizeUndefined();
+		errorMessage.setVisible(false);
 		HorizontalLayout buttons = new HorizontalLayout(save, cancel);
-		addComponents(categoryField, buttons);
+		errorMessage.setStyleName(ValoTheme.LABEL_FAILURE);
+		addComponents(categoryField, buttons, errorMessage);
 		
 		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		save.setClickShortcut(KeyCode.ENTER);
 		
 		save.addClickListener(e -> save());
 		cancel.addClickListener(e -> cancel());
-		
+		addListener(e -> errorMessage.setVisible(false));
+		categoryField.addListener(e -> errorMessage.setVisible(false));
 		categoryField.setDescription("This is Category");
 		binder.forField(categoryField).asRequired("Hotel not null")
 		.withValidator(categoryVal -> categoryVal.trim().length() > 1, "Category should not be empty")
@@ -73,6 +77,9 @@ public class CategoryForm extends FormLayout{
 			service.save(category);
 			myUI.updateListCategory();
 			setVisible(false);
+		} else {
+			errorMessage.setVisible(true);
+			errorMessage.setValue("Category: " + category.getCategory() + " already exist!");
 		}
 	}
 }

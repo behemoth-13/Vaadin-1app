@@ -52,7 +52,6 @@ public class Hotel extends AbstractEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "CATEGORY_ID", foreignKey = @ForeignKey(name = "FK_CATEGORY_ID"))
-	//@NotNull(message = "Every hotel must have a category")
 	private Category category;
 	
 	@Column(columnDefinition = "TEXT")
