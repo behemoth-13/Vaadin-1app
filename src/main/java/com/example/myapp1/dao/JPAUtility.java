@@ -9,7 +9,6 @@ public class JPAUtility{
 	private static final EntityManager em;
 	
 	static {
-		System.out.println("static");
 		   emFactory = Persistence.createEntityManagerFactory("demo_hotels");
 		   em = emFactory.createEntityManager();
 	}

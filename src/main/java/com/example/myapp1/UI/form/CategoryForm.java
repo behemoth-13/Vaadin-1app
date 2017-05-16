@@ -2,7 +2,7 @@ package com.example.myapp1.UI.form;
 
 import java.util.Set;
 
-import com.example.myapp1.UI.MyUI;
+import com.example.myapp1.UI.views.CategoryView;
 import com.example.myapp1.dao.entity.Category;
 import com.example.myapp1.service.CategoryService;
 import com.vaadin.data.Binder;
@@ -24,11 +24,11 @@ public class CategoryForm extends FormLayout{
 	
 	private CategoryService service = CategoryService.getInstance();
 	private Category category;
-	private MyUI myUI;
+	private CategoryView categoryView;
 	private Binder<Category> binder =new Binder<>(Category.class);
 	
-	public CategoryForm(MyUI myUI) {
-		this.myUI = myUI;
+	public CategoryForm(CategoryView categoryView) {
+		this.categoryView = categoryView;
 		
 		setSizeUndefined();
 		errorMessage.setVisible(false);
@@ -58,8 +58,9 @@ public class CategoryForm extends FormLayout{
 	}
 	
 	private void cancel() {
-		myUI.updateListCategory();
-		service.refreshCategories();
+		binder.readBean(category);
+		binder.writeBeanIfValid(category);
+		binder.removeBean();
 		setVisible(false);
 	}
 	
@@ -67,7 +68,7 @@ public class CategoryForm extends FormLayout{
 		for (Category category : set) {
 			service.delete(category);
 		}
-		myUI.updateListCategory();
+		categoryView.updateListCategory();
 		setVisible(false);
 	}
 	
@@ -75,7 +76,7 @@ public class CategoryForm extends FormLayout{
 		binder.validate();
 		if (binder.isValid() && (!service.isExistCategory(category))) {
 			service.save(category);
-			myUI.updateListCategory();
+			categoryView.updateListCategory();
 			setVisible(false);
 		} else {
 			errorMessage.setVisible(true);
