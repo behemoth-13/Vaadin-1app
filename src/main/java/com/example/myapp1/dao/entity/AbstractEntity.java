@@ -16,6 +16,7 @@ public abstract class AbstractEntity implements Serializable, Cloneable {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID", nullable = false)
 	protected Long id;
     
 	@Version

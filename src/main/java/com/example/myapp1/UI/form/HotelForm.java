@@ -1,7 +1,7 @@
 package com.example.myapp1.UI.form;
 
-import com.example.myapp1.UI.MyUI;
 import com.example.myapp1.UI.form.converter.DateConverter;
+import com.example.myapp1.UI.views.HotelView;
 import com.example.myapp1.dao.entity.Category;
 import com.example.myapp1.dao.entity.Hotel;
 import com.example.myapp1.service.CategoryService;
@@ -10,7 +10,6 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.event.ShortcutAction.KeyCode;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.FormLayout;
@@ -31,28 +30,27 @@ public class HotelForm extends FormLayout{
 	private NativeSelect<Category> category = new NativeSelect<>("Category");
 	private TextArea description = new TextArea("Description");
 	private TextField url = new TextField("Url");
-	private Button save = new Button(VaadinIcons.CHECK);
-	private Button delete = new Button(VaadinIcons.TRASH);
-	private Button cancel = new Button(VaadinIcons.CLOSE);
+	private Button save = new Button("Save");
+	private Button cancel = new Button("Cancel");
 	private final Label errorMessage = new Label("");
 	
 	private HotelService service = HotelService.getInstance();
 	private Hotel hotel;
-	private MyUI myUI;
-	private Binder<Hotel> binder =new Binder<>(Hotel.class);
+	private HotelView hotelView;
+	private Binder<Hotel> binder = new Binder<>(Hotel.class);
 	
-	public HotelForm(MyUI myUI) {
-		this.myUI = myUI;
+	public HotelForm(HotelView hotelView) {
 		
+		this.hotelView = hotelView;
 		setSizeUndefined();
-		HorizontalLayout buttons = new HorizontalLayout(save, delete, cancel);
+		HorizontalLayout buttons = new HorizontalLayout(save, cancel);
 		addComponents(name, address, rating, operatesFrom, category, description, url, buttons, errorMessage);
 		errorMessage.setVisible(false);
 		errorMessage.setStyleName(ValoTheme.LABEL_FAILURE);
 		category.setItems(CategoryService.getInstance().findAll().toArray(new Category[(int)CategoryService.getInstance().count()]));
+		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		save.setClickShortcut(KeyCode.ENTER);
 		save.addClickListener(e -> save());
-		delete.addClickListener(e -> delete());
 		cancel.setClickShortcut(KeyCode.ESCAPE);
 		cancel.addClickListener(e -> cancel());
 
@@ -85,7 +83,7 @@ public class HotelForm extends FormLayout{
 		
 		binder.forField(rating).withConverter(new StringToIntegerConverter(0, "Only Digits!"))
 		.asRequired("Every hotel must have a rating")
-		.withValidator(ratingVal -> ratingVal < 6, "Rating should be a number less then 6")
+		.withValidator(ratingVal -> ratingVal < 6, "Rating should be a number less or 5")
 		.withValidator(ratingVal -> ratingVal > 0, "Rating should be a positive number")
 		.bind(Hotel::getRating, Hotel::setRating);
 		
@@ -114,30 +112,22 @@ public class HotelForm extends FormLayout{
 		url.setDescription("Url of hotel");
 		//for buttons
 		save.setDescription("Save");
-		delete.setDescription("Delete");
 		cancel.setDescription("Cancel");
 	}
 
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
 		binder.setBean(hotel);
-		delete.setVisible(hotel.isPersisted());
 		setVisible(true);
 		name.selectAll();
 		binder.validate();
-	}
-	
-	private void delete() {
-		service.delete(hotel);
-		myUI.updateListHotel();
-		setVisible(false);
 	}
 	
 	private void save() {
 		binder.validate();
 		if (binder.isValid() && (!service.isExistHotel(hotel))) {
 			service.save(hotel);
-			myUI.updateListHotel();
+			hotelView.updateListHotel();
 			setVisible(false);
 		}else {
 			errorMessage.setVisible(true);
@@ -146,7 +136,6 @@ public class HotelForm extends FormLayout{
 	}
 	
 	private void cancel() {
-		myUI.updateListCategory();
 		service.refreshHotels();
 		setVisible(false);
 	}

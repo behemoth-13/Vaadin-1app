@@ -41,6 +41,8 @@
 			newDataType="INT UNSIGNED"/>
 		<addNotNullConstraint tableName="HOTEL" columnName="RATING" 
 			columnDataType="INT UNSIGNED"/>
+    	<addAutoIncrement columnDataType="BIGINT UNSIGNED" columnName="ID"
+            incrementBy="1" startWith="1" tableName="HOTEL"/>
 		<modifyDataType tableName="HOTEL" columnName="OPERATES_FROM" 
 			newDataType="BIGINT UNSIGNED"/>
 		<addNotNullConstraint tableName="HOTEL" columnName="OPERATES_FROM" 

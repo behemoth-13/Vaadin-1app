@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
 	   @NamedQuery(name = "Hotel.findByCategory", query = "SELECT h from Hotel h WHERE h.category = :categoryFilter"),
 	   @NamedQuery(name = "Hotel.count", query = "SELECT COUNT(h) FROM Hotel h"),
 	   @NamedQuery(name = "Hotel.filter", query = "SELECT h FROM Hotel AS h WHERE (LOWER(h.name) LIKE :filter) "
-	   		+ "OR (LOWER(h.address) LIKE :filter) OR (LOWER(h.operatesFrom) LIKE :filter) "
+	   		+ "OR (LOWER(h.address) LIKE :filter) OR (h.operatesFrom LIKE :filter) "
 	   		+ "OR (LOWER(h.description) LIKE :filter) OR (LOWER(h.url) LIKE :filter)"),
 	   @NamedQuery(name = "Hotel.filterByName", query = "SELECT h FROM Hotel AS h WHERE LOWER(h.name) LIKE :filter"),
 	   @NamedQuery(name = "Hotel.filterByAddress", query = "SELECT h FROM Hotel AS h WHERE LOWER(h.address) LIKE :filter"),

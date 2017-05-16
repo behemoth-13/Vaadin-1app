@@ -1,6 +1,7 @@
 package com.example.myapp1.service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -99,6 +100,22 @@ public class HotelService {
         }
 	}
 	
+	public synchronized void save(Set<Hotel> hotels) {
+		em.getTransaction().begin();
+		for (Hotel hotel : hotels) {
+			if (hotel == null) {
+				LOGGER.log(Level.SEVERE, "Hotel is null.");
+				return;
+			}
+			if (hotel.getId() == null) {
+				em.persist(hotel);
+			} else {
+	            em.merge(hotel);
+	        }
+		}
+		em.getTransaction().commit();
+	}
+	
 	public synchronized void refreshHotels() {
 		List<Hotel> hotelsList = findAll();
 		for(Hotel hotel:hotelsList){
@@ -117,4 +134,12 @@ public class HotelService {
 				.getResultList()).size() > 0;
 	}
 
+	public synchronized boolean isExistHotels(Set<Hotel> checkHotels) {
+		for (Hotel hotel : checkHotels) {
+			if (isExistHotel(hotel)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
