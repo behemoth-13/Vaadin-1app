@@ -121,20 +121,9 @@ public class HotelView extends VerticalLayout implements View {
 		deleteHotelBtn.setEnabled(false);
         
         gridHotel.asMultiSelect().addValueChangeListener(e -> {
-        	if(e.getValue().size() == 1) {
-        		bulkUpdateHotelBtn.setEnabled(false);
-        		editHotelBtn.setEnabled(true);
-        		deleteHotelBtn.setEnabled(true);
-        	} else if(e.getValue().size() == 0) {
-        		bulkUpdateHotelBtn.setEnabled(false);
-        		editHotelBtn.setEnabled(false);
-        		deleteHotelBtn.setEnabled(false);
-        	}
-        	else {
-        		bulkUpdateHotelBtn.setEnabled(true);
-        		editHotelBtn.setEnabled(false);
-        		deleteHotelBtn.setEnabled(true);
-        	}
+        	bulkUpdateHotelBtn.setEnabled(e.getValue().size() > 1);
+        	editHotelBtn.setEnabled(e.getValue().size() == 1);
+        	deleteHotelBtn.setEnabled(e.getValue().size() > 0);
         });
 	}
 
