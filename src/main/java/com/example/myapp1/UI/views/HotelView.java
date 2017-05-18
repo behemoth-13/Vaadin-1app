@@ -140,5 +140,4 @@ public class HotelView extends VerticalLayout implements View {
 		}
 		updateListHotel();
 	}
-
 }
