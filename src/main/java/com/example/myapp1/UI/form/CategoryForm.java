@@ -1,5 +1,7 @@
 package com.example.myapp1.UI.form;
 
+import static com.example.myapp1.ElementId.*;
+
 import java.util.Set;
 
 import com.example.myapp1.UI.views.CategoryView;
@@ -19,8 +21,8 @@ public class CategoryForm extends FormLayout{
 	private static final long serialVersionUID = 1L;
 	
 	private TextField categoryField = new TextField("Category");
-	private Button save = new Button("Save");
-	private Button cancel = new Button("Cancel");
+	private Button saveBtn = new Button("Save");
+	private Button cancelBtn = new Button("Cancel");
 	private final Label errorMessage = new Label("");
 	
 	private CategoryService service = CategoryService.getInstance();
@@ -33,21 +35,21 @@ public class CategoryForm extends FormLayout{
 		
 		setSizeUndefined();
 		errorMessage.setVisible(false);
-		HorizontalLayout buttons = new HorizontalLayout(save, cancel);
+		HorizontalLayout buttons = new HorizontalLayout(saveBtn, cancelBtn);
 		errorMessage.setStyleName(ValoTheme.LABEL_FAILURE);
 		addComponents(categoryField, buttons, errorMessage);
 		
-		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
-		save.setClickShortcut(KeyCode.ENTER);
-		
-		save.addClickListener(e -> save());
-		cancel.addClickListener(e -> cancel());
+		saveBtn.setStyleName(ValoTheme.BUTTON_PRIMARY);
+		saveBtn.setClickShortcut(KeyCode.ENTER);
+		saveBtn.addClickListener(e -> save());
+		cancelBtn.addClickListener(e -> cancel());
 		addListener(e -> errorMessage.setVisible(false));
 		categoryField.addListener(e -> errorMessage.setVisible(false));
 		categoryField.setDescription("This is Category");
 		binder.forField(categoryField).asRequired("Hotel not null")
 		.withValidator(categoryVal -> categoryVal.trim().length() > 1, "Category should not be empty")
 		.bind(Category::getCategory, Category::setCategory);
+		setIds();
 	}
 
 	public void setCategory(Category category) {
@@ -90,6 +92,11 @@ public class CategoryForm extends FormLayout{
 			errorMessage.setVisible(true);
 			errorMessage.setValue("Category: " + category.getCategory() + " already exist!");
 		}
+	}
+	
+	private void setIds() {
+		saveBtn.setId(CATEGORYFORM_SAVE_BTN);
+		categoryField.setId(CATEGORYFORM_CATEGORYFIELD);
 	}
 }
 

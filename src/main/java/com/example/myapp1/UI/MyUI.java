@@ -44,7 +44,6 @@ public class MyUI extends UI {
     	navigator = new Navigator(this, mainPanel);
     	navigator.addView(HotelView.VIEW_NAME, HotelView.class);
     	navigator.addView(CategoryView.VIEW_NAME, CategoryView.class);
-    	
 		navigator.navigateTo(HotelView.VIEW_NAME);
 		
 		setContent(mainLayout);
@@ -55,7 +54,7 @@ public class MyUI extends UI {
 			return menuBar;
 		}
 		menuBar = new MenuBar();
-		
+		//menuBar.setId("menuBar1");
 		menuBar.addItem("Hotel", command -> navigator.navigateTo(HotelView.VIEW_NAME));
 		menuBar.addItem("", null).setEnabled(false);
 		menuBar.addItem("Categories", command -> navigator.navigateTo(CategoryView.VIEW_NAME));

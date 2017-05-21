@@ -1,5 +1,6 @@
 package com.example.myapp1.UI.form;
 
+import static com.example.myapp1.ElementId.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +25,7 @@ public class PaymentField extends CustomField<Payment> {
 	
 	private List<String> data = Arrays.asList(CREDIT_CARD, CASH);
 	private RadioButtonGroup<String> radioButtons = new RadioButtonGroup<>(null, data);
-	private TextField deposit = new TextField();
+	private TextField depositField = new TextField();
 	private Label cashMessage = new Label("Payment will be made\ndirectly in the hotel" , ContentMode.PREFORMATTED);
 	
 	
@@ -44,16 +45,16 @@ public class PaymentField extends CustomField<Payment> {
 		cashMessage.addStyleName(ValoTheme.LABEL_SMALL);
 		ver.setMargin(false);
 		setCaption("Payment");
-		ver.addComponents(radioButtons, deposit, cashMessage);
+		ver.addComponents(radioButtons, depositField, cashMessage);
 
 		radioButtons.addValueChangeListener(e -> {
 			switch (e.getValue()) {
 				case CREDIT_CARD : {
 					if (payment.getDeposit() != null) {
-						deposit.setValue(payment.getDeposit().toString());
+						depositField.setValue(payment.getDeposit().toString());
 						setValue(payment);
 					} else {
-						deposit.setValue("0");
+						depositField.setValue("0");
 						setValue(new Payment(0));
 					}
 					break;
@@ -65,22 +66,23 @@ public class PaymentField extends CustomField<Payment> {
 					break;
 				}
 			}
-			deposit.setVisible(e.getValue() == CREDIT_CARD);
+			depositField.setVisible(e.getValue() == CREDIT_CARD);
 			cashMessage.setVisible(e.getValue() == CASH);
 			
 		});
 		
-		deposit.addValueChangeListener(e -> {
+		depositField.addValueChangeListener(e -> {
 			if (!e.getValue().isEmpty() && binder.isValid())
 				setValue(new Payment(Integer.parseInt(e.getValue())));
 		});
 			
 			
 		
-		binder.forField(deposit).withConverter(new StringToIntegerConverter(0, "Only Digits!"))
+		binder.forField(depositField).withConverter(new StringToIntegerConverter(0, "Only Digits!"))
 		.withValidator(r -> r >= 0, "0% is min deposit")
 		.withValidator(r -> r <= 100, "100% is max deposit")
 		.bind(Payment::getDeposit, Payment::setDeposit);
+		setIds();
 		return ver;
 	}
 
@@ -115,5 +117,10 @@ public class PaymentField extends CustomField<Payment> {
 	
 	public String getNotification() {
 		return notification;
+	}
+	
+	private void setIds() {
+		radioButtons.setId(PAYMENTFIELD_RADIO_BUTTONS);
+		depositField.setId(PAYMENTFIELD_DEPOSIT_FIELD);
 	}
 }

@@ -13,7 +13,7 @@ public class DateConverter implements Converter<LocalDate, Long> {
 	@Override
 	public Result<Long> convertToModel(LocalDate value, ValueContext context) {
 		if (value == null) {
-			Result.ok(null);
+			return Result.error("Date is not valid. Example: 01.01.2017");
 		}
 		long days = Duration.between(value.atTime(0, 0), LocalDate.now().atTime(0, 0)).toDays();
 		return Result.ok(days);

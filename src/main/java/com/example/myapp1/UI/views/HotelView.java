@@ -1,5 +1,7 @@
 package com.example.myapp1.UI.views;
 
+import static com.example.myapp1.ElementId.*;
+
 import java.util.List;
 import java.util.Set;
 
@@ -66,6 +68,7 @@ public class HotelView extends VerticalLayout implements View {
         filteringByAdress.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
         
         Button addHotelBtn = new Button("New");
+        addHotelBtn.setId(HOTELVIEW_ADDHOTEL_BTN);
         
         Button editHotelBtn = new Button("Edit");
         

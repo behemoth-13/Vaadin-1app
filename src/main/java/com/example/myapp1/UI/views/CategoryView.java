@@ -1,5 +1,7 @@
 package com.example.myapp1.UI.views;
 
+import static com.example.myapp1.ElementId.*;
+
 import java.util.List;
 
 import com.example.myapp1.UI.form.CategoryForm;
@@ -29,6 +31,7 @@ public class CategoryView extends VerticalLayout implements View {
 		gridCategory.setSelectionMode(SelectionMode.MULTI);
         formCategory.setVisible(false);
         Button addCategoryBtn = new Button("New");
+        addCategoryBtn.setId(CATEGORYVIEW_ADD_CATEGORY_BTN);
         addCategoryBtn.addClickListener(e -> {
         	gridCategory.asMultiSelect().clear();
         	formCategory.setCategory(new Category(null, ""));
@@ -44,7 +47,6 @@ public class CategoryView extends VerticalLayout implements View {
         deleteCategoryBtn.addClickListener(e -> {
         	formCategory.delete(gridCategory.asMultiSelect().getSelectedItems());
         	gridCategory.asMultiSelect().clear();
-        	//serviceCategory.refreshCategories();
         	serviceHotel.refreshHotels();
         });
         
@@ -67,7 +69,6 @@ public class CategoryView extends VerticalLayout implements View {
         addComponents(toolbar, category);
         
         updateListCategory();
-		
 	}
 	
 	public void updateListCategory() {

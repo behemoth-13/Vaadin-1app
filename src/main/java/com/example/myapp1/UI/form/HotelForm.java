@@ -1,5 +1,7 @@
 package com.example.myapp1.UI.form;
 
+import static com.example.myapp1.ElementId.*;
+
 import com.example.myapp1.UI.form.converter.DateConverter;
 import com.example.myapp1.UI.views.HotelView;
 import com.example.myapp1.dao.entity.Category;
@@ -26,16 +28,16 @@ import com.vaadin.ui.themes.ValoTheme;
 public class HotelForm extends FormLayout{
 	private static final long serialVersionUID = 1L;
 	
-	private TextField name = new TextField("Name");
-	private TextField address = new TextField("Address");
-	private TextField rating = new TextField("Rating");
-	private DateField operatesFrom = new DateField("Operates from");
-	private NativeSelect<Category> category = new NativeSelect<>("Category");
-	private TextArea description = new TextArea("Description");
-	private TextField url = new TextField("Url");
+	private TextField nameField = new TextField("Name");
+	private TextField addressField = new TextField("Address");
+	private TextField ratingField = new TextField("Rating");
+	private DateField operatesFromDateField = new DateField("Operates from");
+	private NativeSelect<Category> categoryNativeSelect = new NativeSelect<>("Category");
+	private TextArea descriptionField = new TextArea("Description");
+	private TextField urlField = new TextField("Url");
 	private PaymentField payment = new PaymentField();
-	private Button save = new Button("Save");
-	private Button cancel = new Button("Cancel");
+	private Button saveBtn = new Button("Save");
+	private Button cancelBtn = new Button("Cancel");
 	private final Label errorMessage = new Label("");
 	
 	private HotelService service = HotelService.getInstance();
@@ -47,27 +49,27 @@ public class HotelForm extends FormLayout{
 		
 		this.hotelView = hotelView;
 		setSizeUndefined();
-		HorizontalLayout buttons = new HorizontalLayout(save, cancel);
-		addComponents(name, address, rating, operatesFrom, category, description, url,
+		HorizontalLayout buttons = new HorizontalLayout(saveBtn, cancelBtn);
+		addComponents(nameField, addressField, ratingField, operatesFromDateField, categoryNativeSelect, descriptionField, urlField,
 				payment, buttons, errorMessage);
 		errorMessage.setVisible(false);
 		errorMessage.setStyleName(ValoTheme.LABEL_FAILURE);
 		
-		category.setItems(CategoryService.getInstance().findAll().toArray(new Category[(int)CategoryService.getInstance().count()]));
+		categoryNativeSelect.setItems(CategoryService.getInstance().findAll().toArray(new Category[(int)CategoryService.getInstance().count()]));
 		
-		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
-		save.setClickShortcut(KeyCode.ENTER);
-		save.addClickListener(e -> save());
-		cancel.setClickShortcut(KeyCode.ESCAPE);
-		cancel.addClickListener(e -> cancel());
+		saveBtn.setStyleName(ValoTheme.BUTTON_PRIMARY);
+		saveBtn.setClickShortcut(KeyCode.ENTER);
+		saveBtn.addClickListener(e -> save());
+		cancelBtn.setClickShortcut(KeyCode.ESCAPE);
+		cancelBtn.addClickListener(e -> cancel());
 
-		name.addListener(e -> errorMessage.setVisible(false));
-		address.addListener(e -> errorMessage.setVisible(false));
-		rating.addListener(e -> errorMessage.setVisible(false));
-		operatesFrom.addListener(e -> errorMessage.setVisible(false));
-		category.addListener(e -> errorMessage.setVisible(false));
-		description.addListener(e -> errorMessage.setVisible(false));
-		url.addListener(e -> errorMessage.setVisible(false));
+		nameField.addListener(e -> errorMessage.setVisible(false));
+		addressField.addListener(e -> errorMessage.setVisible(false));
+		ratingField.addListener(e -> errorMessage.setVisible(false));
+		operatesFromDateField.addListener(e -> errorMessage.setVisible(false));
+		categoryNativeSelect.addListener(e -> errorMessage.setVisible(false));
+		descriptionField.addListener(e -> errorMessage.setVisible(false));
+		urlField.addListener(e -> errorMessage.setVisible(false));
 		addListener(e -> errorMessage.setVisible(false));
 	
 		payment.addValueChangeListener(event -> Notification.show(payment.getNotification(),
@@ -75,38 +77,39 @@ public class HotelForm extends FormLayout{
 		
 		setToolTips();
 		bindFields();
+		setIds();
 	}
 	
 	public void refreshCategoryField() {
-		category.clear();
-		category.setItems(CategoryService.getInstance().findAll().toArray(new Category[(int)CategoryService.getInstance().count()]));
+		categoryNativeSelect.clear();
+		categoryNativeSelect.setItems(CategoryService.getInstance().findAll().toArray(new Category[(int)CategoryService.getInstance().count()]));
 	}
 	
 	private void bindFields() {
-		binder.forField(name).asRequired("Every hotel must have a name")
+		binder.forField(nameField).asRequired("Every hotel must have a name")
 		.withValidator(nameVal -> nameVal.trim().length() > 1, "Name should not be empty")
 		.bind(Hotel::getName, Hotel::setName);
 		
-		binder.forField(address).asRequired("Every hotel must have an address")
+		binder.forField(addressField).asRequired("Every hotel must have an address")
 		.withValidator(addressVal -> addressVal.trim().length() > 1, "Address should not be empty")
 		.bind(Hotel::getAddress, Hotel::setAddress);
 		
-		binder.forField(rating).withConverter(new StringToIntegerConverter(0, "Only Digits!"))
+		binder.forField(ratingField).withConverter(new StringToIntegerConverter(0, "Only Digits!"))
 		.asRequired("Every hotel must have a rating")
 		.withValidator(ratingVal -> ratingVal < 6, "Rating should be a number less or 5")
 		.withValidator(ratingVal -> ratingVal > 0, "Rating should be a positive number")
 		.bind(Hotel::getRating, Hotel::setRating);
 		
-		binder.forField(category).asRequired("Every hotel must have a category").bind(Hotel::getCategory, Hotel::setCategory);
+		binder.forField(categoryNativeSelect).asRequired("Every hotel must have a category").bind(Hotel::getCategory, Hotel::setCategory);
 		
-		binder.forField(operatesFrom).withConverter(new DateConverter())
+		binder.forField(operatesFromDateField).withConverter(new DateConverter())
 		.asRequired("Every hotel must have a date since it works")
 		.withValidator(operatesFromVal -> operatesFromVal < 10950, "Date isn't more senior than 30 years")
 		.bind(Hotel::getOperatesFrom, Hotel::setOperatesFrom);
 		
-		binder.forField(description).bind(Hotel::getDescription, Hotel::setDescription);
+		binder.forField(descriptionField).bind(Hotel::getDescription, Hotel::setDescription);
 		
-		binder.forField(url).asRequired("Every hotel must have an url")
+		binder.forField(urlField).asRequired("Every hotel must have an url")
 		.withValidator(new RegexpValidator("Url example: https://www.booking.com/.....html", "^(http://|https://)www\\.booking\\.com/.+\\.html$"))
 		.bind(Hotel::getUrl, Hotel::setUrl);
 		
@@ -115,17 +118,17 @@ public class HotelForm extends FormLayout{
 	
 	private void setToolTips() {
 		//for fields
-		name.setDescription("Hotel's name");
-		address.setDescription("Hotel's address");
-		rating.setDescription("Rating of hotel");
-		operatesFrom.setDescription("Date since it works");
-		category.setDescription("Category of hotel");
-		description.setDescription("Description of hotel");
-		url.setDescription("Url of hotel");
+		nameField.setDescription("Hotel's name");
+		addressField.setDescription("Hotel's address");
+		ratingField.setDescription("Rating of hotel");
+		operatesFromDateField.setDescription("Date since it works");
+		categoryNativeSelect.setDescription("Category of hotel");
+		descriptionField.setDescription("Description of hotel");
+		urlField.setDescription("Url of hotel");
 		payment.setDescription("Field of payment");
 		//for buttons
-		save.setDescription("Save");
-		cancel.setDescription("Cancel");
+		saveBtn.setDescription("Save");
+		cancelBtn.setDescription("Cancel");
 	}
 
 	public void setHotel(Hotel hotel) {
@@ -161,5 +164,16 @@ public class HotelForm extends FormLayout{
 	private void cancel() {
 		binder.removeBean();
 		setVisible(false);
+	}
+	
+	private void setIds() {
+		nameField.setId(HOTELFORM_NAME_FIELD);
+		addressField.setId(HOTELFORM_ADDRESS_FIELD);
+		ratingField.setId(HOTELFORM_RATING_FIELD);
+		operatesFromDateField.setId(HOTELFORM_OPERATESFROM_DATE_FIELD);
+		categoryNativeSelect.setId(HOTELFORM_CATEGORY_NATIVE_SELECT);
+		descriptionField.setId(HOTELFORM_DESCRIPTION_FIELD);
+		urlField.setId(HOTELFORM_URL_FIELD);
+		saveBtn.setId(HOTELFORM_SAVE_BTN);
 	}
 }
