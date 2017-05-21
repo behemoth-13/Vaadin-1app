@@ -7,6 +7,7 @@ import com.example.myapp1.dao.entity.Hotel;
 import com.example.myapp1.service.CategoryService;
 import com.example.myapp1.service.HotelService;
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.event.ShortcutAction.KeyCode;
@@ -16,6 +17,8 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
@@ -30,6 +33,7 @@ public class HotelForm extends FormLayout{
 	private NativeSelect<Category> category = new NativeSelect<>("Category");
 	private TextArea description = new TextArea("Description");
 	private TextField url = new TextField("Url");
+	private PaymentField payment = new PaymentField();
 	private Button save = new Button("Save");
 	private Button cancel = new Button("Cancel");
 	private final Label errorMessage = new Label("");
@@ -44,10 +48,13 @@ public class HotelForm extends FormLayout{
 		this.hotelView = hotelView;
 		setSizeUndefined();
 		HorizontalLayout buttons = new HorizontalLayout(save, cancel);
-		addComponents(name, address, rating, operatesFrom, category, description, url, buttons, errorMessage);
+		addComponents(name, address, rating, operatesFrom, category, description, url,
+				payment, buttons, errorMessage);
 		errorMessage.setVisible(false);
 		errorMessage.setStyleName(ValoTheme.LABEL_FAILURE);
+		
 		category.setItems(CategoryService.getInstance().findAll().toArray(new Category[(int)CategoryService.getInstance().count()]));
+		
 		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		save.setClickShortcut(KeyCode.ENTER);
 		save.addClickListener(e -> save());
@@ -62,6 +69,9 @@ public class HotelForm extends FormLayout{
 		description.addListener(e -> errorMessage.setVisible(false));
 		url.addListener(e -> errorMessage.setVisible(false));
 		addListener(e -> errorMessage.setVisible(false));
+	
+		payment.addValueChangeListener(event -> Notification.show(payment.getNotification(),
+                Type.TRAY_NOTIFICATION));
 		
 		setToolTips();
 		bindFields();
@@ -99,6 +109,8 @@ public class HotelForm extends FormLayout{
 		binder.forField(url).asRequired("Every hotel must have an url")
 		.withValidator(new RegexpValidator("Url example: https://www.booking.com/.....html", "^(http://|https://)www\\.booking\\.com/.+\\.html$"))
 		.bind(Hotel::getUrl, Hotel::setUrl);
+		
+		binder.forField(payment).bind(Hotel::getPayment, Hotel::setPayment);
 	}
 	
 	private void setToolTips() {
@@ -110,33 +122,44 @@ public class HotelForm extends FormLayout{
 		category.setDescription("Category of hotel");
 		description.setDescription("Description of hotel");
 		url.setDescription("Url of hotel");
+		payment.setDescription("Field of payment");
 		//for buttons
 		save.setDescription("Save");
 		cancel.setDescription("Cancel");
 	}
 
 	public void setHotel(Hotel hotel) {
-		this.hotel = hotel;
-		binder.setBean(hotel);
+		try {
+			this.hotel = hotel.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		binder.readBean(this.hotel);
 		setVisible(true);
-		name.selectAll();
 		binder.validate();
 	}
 	
 	private void save() {
+		try {
+			binder.writeBean(hotel);
+		} catch (ValidationException e) {
+			e.printStackTrace();
+		}
 		binder.validate();
 		if (binder.isValid() && (!service.isExistHotel(hotel))) {
+			hotel.setPayment(payment.getValue());
 			service.save(hotel);
 			hotelView.updateListHotel();
 			setVisible(false);
 		}else {
+			binder.removeBean();
 			errorMessage.setVisible(true);
 			errorMessage.setValue("Hotel exist!");
 		}
 	}
 	
 	private void cancel() {
-		service.refreshHotels();
+		binder.removeBean();
 		setVisible(false);
 	}
 }

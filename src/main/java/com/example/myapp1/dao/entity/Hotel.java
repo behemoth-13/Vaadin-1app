@@ -1,12 +1,14 @@
 package com.example.myapp1.dao.entity;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -27,8 +29,10 @@ import javax.validation.constraints.Size;
 	   		+ "(LOWER(h.name) LIKE :filterByName) AND (LOWER(h.address) LIKE :filterByAddress)"),
 	   @NamedQuery(name = "Hotel.equals", query = "SELECT h FROM Hotel AS h WHERE "
 		   		+ "(h.name = :name) AND (h.address = :address) AND (h.category = :category) AND (h.rating = :rating) AND "
-		   		+ "(h.operatesFrom = :operatesFrom) AND (h.url = :url) AND (h.description = :description)")
+		   		+ "(h.operatesFrom = :operatesFrom) AND (h.url = :url) AND (h.description = :description) AND "
+		   		+ "(h.payment = :payment)")
 	})
+@Table(name = "HOTEL")
 public class Hotel extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 	
@@ -60,6 +64,9 @@ public class Hotel extends AbstractEntity {
 	@NotNull(message = "Every hotel must have an url")
     @Pattern(regexp = "^(http://|https://)www\\.booking\\.com/.+\\.html$", message = "Url example: https://www.booking.com/.....html")
 	private String url;
+	
+	@Embedded
+	private Payment payment;
 
 	public boolean isPersisted() {
 		return id != null;
@@ -67,11 +74,11 @@ public class Hotel extends AbstractEntity {
 
 	@Override
 	public String toString() {
-		return name + " " + rating +"stars " + address;
+		return name + " " + rating +"stars " + address + " pfpgpf " + payment;
 	}
 
 	@Override
-	protected Hotel clone() throws CloneNotSupportedException {
+	public Hotel clone() throws CloneNotSupportedException {
 		return (Hotel) super.clone();
 	}
 
@@ -188,6 +195,7 @@ public class Hotel extends AbstractEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
 	public String getUrl() {
 		return url;
 	}
@@ -196,7 +204,18 @@ public class Hotel extends AbstractEntity {
 		this.url = url;
 	}
 
-	public Hotel(Long id, String name, String address, Integer rating, Long operatesFrom, Category category, String url) {
+	public Payment getPayment() {
+		if (payment == null) {
+			payment = new Payment();
+		}
+		return payment;
+	}
+
+	public void setPayment(Payment payment) {
+		this.payment = payment;
+	}
+
+	public Hotel(Long id, String name, String address, Integer rating, Long operatesFrom, Category category, String url, Payment payment) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -205,5 +224,6 @@ public class Hotel extends AbstractEntity {
 		this.operatesFrom = operatesFrom;
 		this.category = category;
 		this.url = url;
+		this.payment = payment;
 	}
 }

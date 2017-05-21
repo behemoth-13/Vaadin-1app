@@ -37,13 +37,14 @@ public class CategoryView extends VerticalLayout implements View {
         Button editCategoryBtn = new Button("Edit");
         
         editCategoryBtn.addClickListener(e -> {
-        	formCategory.setCategory(gridCategory.asMultiSelect().getSelectedItems().iterator().next());
+        	formCategory.setCategory(gridCategory.getSelectedItems().iterator().next());
         });
         
         Button deleteCategoryBtn = new Button("Delete");
         deleteCategoryBtn.addClickListener(e -> {
         	formCategory.delete(gridCategory.asMultiSelect().getSelectedItems());
         	gridCategory.asMultiSelect().clear();
+        	//serviceCategory.refreshCategories();
         	serviceHotel.refreshHotels();
         });
         
@@ -52,17 +53,8 @@ public class CategoryView extends VerticalLayout implements View {
         
         gridCategory.asMultiSelect().addValueChangeListener(e -> {
         	formCategory.setVisible(false);
-        	if(e.getValue().size() == 1) {
-        		editCategoryBtn.setEnabled(true);
-    	        deleteCategoryBtn.setEnabled(true);
-        	} else if(e.getValue().size() == 0) {
-        		editCategoryBtn.setEnabled(false);
-    	        deleteCategoryBtn.setEnabled(false);
-        	}
-        	else {
-        		editCategoryBtn.setEnabled(false);
-    	        deleteCategoryBtn.setEnabled(true);
-        	}
+        	editCategoryBtn.setEnabled(e.getValue().size() == 1);
+	        deleteCategoryBtn.setEnabled(e.getValue().size() > 0);
         });
         
         HorizontalLayout toolbar = new HorizontalLayout(addCategoryBtn, editCategoryBtn, deleteCategoryBtn);

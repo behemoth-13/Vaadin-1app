@@ -6,6 +6,7 @@ import java.util.Set;
 import com.example.myapp1.UI.form.BulkForm;
 import com.example.myapp1.UI.form.HotelForm;
 import com.example.myapp1.dao.entity.Hotel;
+import com.example.myapp1.dao.entity.Payment;
 import com.example.myapp1.service.CategoryService;
 import com.example.myapp1.service.HotelService;
 import com.vaadin.icons.VaadinIcons;
@@ -76,7 +77,7 @@ public class HotelView extends VerticalLayout implements View {
         
         addHotelBtn.addClickListener(e -> {
         	gridHotel.asMultiSelect().clear();
-        	formHotel.setHotel(new Hotel(null, "", "", 0, 0L, serviceCategory.getDefault(), ""));
+        	formHotel.setHotel(new Hotel(null, "", "", 0, 0L, serviceCategory.getDefault(), "", new Payment()));
         });
 
         popup.setHideOnMouseOut(false);
@@ -121,6 +122,7 @@ public class HotelView extends VerticalLayout implements View {
 		deleteHotelBtn.setEnabled(false);
         
         gridHotel.asMultiSelect().addValueChangeListener(e -> {
+        	formHotel.setVisible(false);
         	bulkUpdateHotelBtn.setEnabled(e.getValue().size() > 1);
         	editHotelBtn.setEnabled(e.getValue().size() == 1);
         	deleteHotelBtn.setEnabled(e.getValue().size() > 0);

@@ -131,6 +131,7 @@ public class HotelService {
 				.setParameter("operatesFrom", checkHotel.getOperatesFrom())
 				.setParameter("url", checkHotel.getUrl())
 				.setParameter("description", checkHotel.getDescription())
+				.setParameter("payment", checkHotel.getPayment())
 				.getResultList()).size() > 0;
 	}
 

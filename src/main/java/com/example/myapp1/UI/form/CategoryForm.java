@@ -6,6 +6,7 @@ import com.example.myapp1.UI.views.CategoryView;
 import com.example.myapp1.dao.entity.Category;
 import com.example.myapp1.service.CategoryService;
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
@@ -50,16 +51,16 @@ public class CategoryForm extends FormLayout{
 	}
 
 	public void setCategory(Category category) {
-		this.category = category;
-		binder.setBean(category);
+		try {
+			this.category = category.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		binder.readBean(this.category);
 		setVisible(true);
-		categoryField.selectAll();
-		binder.validate();
 	}
 	
 	private void cancel() {
-		binder.readBean(category);
-		binder.writeBeanIfValid(category);
 		binder.removeBean();
 		setVisible(false);
 	}
@@ -73,12 +74,19 @@ public class CategoryForm extends FormLayout{
 	}
 	
 	private void save() {
+		try {
+				binder.writeBean(category);
+			} catch (ValidationException e) {
+				e.printStackTrace();
+			}
 		binder.validate();
 		if (binder.isValid() && (!service.isExistCategory(category))) {
+			
 			service.save(category);
 			categoryView.updateListCategory();
 			setVisible(false);
 		} else {
+			binder.removeBean();
 			errorMessage.setVisible(true);
 			errorMessage.setValue("Category: " + category.getCategory() + " already exist!");
 		}

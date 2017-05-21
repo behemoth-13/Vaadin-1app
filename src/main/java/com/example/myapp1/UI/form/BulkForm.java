@@ -1,5 +1,7 @@
 package com.example.myapp1.UI.form;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.util.Set;
 
 import com.example.myapp1.UI.form.converter.DateConverter;
@@ -29,10 +31,9 @@ public class BulkForm extends FormLayout {
 	private NativeSelect<String> insertPar = new NativeSelect<>();
 	private NativeSelect<Category> insertCat = new NativeSelect<>("Category");
 	private DateField insertDate = new DateField("Operates from");
-	private DateConverter conv = new DateConverter();
 	private Button update = new Button("Update");
 	private Button cancel = new Button("Cancel");
-	private Binder<Hotel> binder = new Binder<>(Hotel.class);
+	private Binder<Hotel> binder;
 	private Set<Hotel> hotels;
 	
 	private HotelService service = HotelService.getInstance();
@@ -56,6 +57,8 @@ public class BulkForm extends FormLayout {
 		cancel.addClickListener(e -> setVisible(false));
 		
 		chooseItem.addValueChangeListener(e -> {
+			binder = new Binder<>(Hotel.class);
+			insertText.clear();
 			removeComponentsIfExist();
 			removeComponent(buttons);
 			switch (e.getValue()) {
@@ -135,53 +138,22 @@ public class BulkForm extends FormLayout {
 	
 	private void update(String par) {
 		binder.validate();
+		System.out.println("binder is valid " + binder.isValid());
 		if (binder.isValid()) {
-			switch (chooseItem.getValue()) {
-				case "Name" : {
-					for (Hotel hotel : hotels) {
-						hotel.setName(insertText.getValue());
-					}
-					break;
-				}
-				case "Address" : {
-					for (Hotel hotel : hotels) {
-						hotel.setAddress(insertText.getValue());
-					}
-					break;
-				}
-				case "Rating" : {
-					for (Hotel hotel : hotels) {
-						hotel.setRating(Integer.parseInt(insertPar.getValue()));
-					}
-					break;
-				}
-				case "Operates from" : {
-					for (Hotel hotel : hotels) {
-						hotel.setOperatesFrom(conv.convertToModel(insertDate.getValue(), null).getOrThrow(null));
-					}
-					break;
-				}
-				case "Category" : {
-					for (Hotel hotel : hotels) {
-						hotel.setCategory(insertCat.getValue());
-					}
-					break;
-				}
-				case "Description" : {
-					for (Hotel hotel : hotels) {
-						hotel.setDescription(insertText.getValue());
-					}
-					break;
-				}
-				case "URL" : {
-					for (Hotel hotel : hotels) {
-						hotel.setUrl(insertText.getValue());
-					}
-					break;
+			System.out.println("binderAfter is valid " + binder.isValid());
+			for (Hotel hotel : hotels) {
+				switch (chooseItem.getValue()) {
+					case "Name" : hotel.setName(insertText.getValue());	break;
+					case "Address" : hotel.setAddress(insertText.getValue()); break;
+					case "Rating" : hotel.setRating(Integer.parseInt(insertPar.getValue())); break;
+					case "Operates from" : hotel.setOperatesFrom(Duration.between(insertDate
+							.getValue().atTime(0, 0), LocalDate.now().atTime(0, 0)).toDays()); break;
+					case "Category" : hotel.setCategory(insertCat.getValue()); break;
+					case "Description" : hotel.setDescription(insertText.getValue()); break;
+					case "URL" : hotel.setUrl(insertText.getValue()); break;
 				}
 			}
 			service.save(hotels);
-			insertText.clear();
 			hotelView.updateListHotel();
 			setVisible(false);
 		}

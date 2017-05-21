@@ -78,4 +78,12 @@
 			baseColumnNames="CATEGORY_ID" baseTableName="HOTEL" referencedColumnNames="ID"
 			onDelete="SET NULL"/>
 	</changeSet>
+	<changeSet author="Alexei Afanasyeu" id="Table HOTEL add column GUARANTY_FEE">
+		<!-- ================================= Categories ================================= -->
+		<addColumn tableName="HOTEL">
+			<column name="GUARANTY_FEE" type="INT UNSIGNED">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

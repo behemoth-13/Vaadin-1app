@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotNull;
    @NamedQuery(name = "Category.count", query = "SELECT COUNT(c) FROM Category c"),
    @NamedQuery(name = "Category.containsName", query = "SELECT c FROM Category c WHERE c.category = :name")
 })
+@Table(name = "CATEGORY")
 public class Category extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 	
@@ -30,7 +32,7 @@ public class Category extends AbstractEntity {
 	}
 	
 	@Override
-	protected Category clone() throws CloneNotSupportedException {
+	public Category clone() throws CloneNotSupportedException {
 		return (Category) super.clone();
 	}
 	
